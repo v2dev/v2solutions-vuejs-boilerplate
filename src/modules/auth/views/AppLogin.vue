@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <form class="login-form form-focus">
+    <form class="login-form form-focus" v-if="!showOTP">
       <h2 class="text-center mb-4 display-6">Login</h2>
       <br />
       <div class="mb-3">
@@ -36,12 +36,14 @@
           >
         </p>
       </div>
-      <p class="mt-3">
-        If not a user,
-        <router-link to="/signup" class="signup-link"
-          >click here to sign up</router-link
-        >
-      </p>
+      <div>
+        <p>
+          Not a member?
+          <router-link to="/signup" class="signup-link">Register</router-link>
+        </p>
+      </div>
+      <hr />
+      <GoogleSignInVue />
     </form>
   </div>
 </template>
@@ -56,6 +58,7 @@ import {
   setErrorMessage,
 } from "@/helpers/validation";
 
+import GoogleSignInVue from "./GoogleSignIn.vue";
 const store = useStore();
 const router = useRouter();
 
@@ -142,5 +145,24 @@ const clearErrors = () => {
 .forgot-text {
   margin-left: 100px;
   margin-top: 10px;
+}
+.btn-google {
+  border: 1px solid rgb(190, 190, 190);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+}
+.btn-google:hover {
+  background-color: rgb(
+    231,
+    229,
+    229
+  ); /* Change this to the desired hover color */
+}
+img {
+  height: 30px;
+  width: 30px;
+  margin-right: 5px;
 }
 </style>

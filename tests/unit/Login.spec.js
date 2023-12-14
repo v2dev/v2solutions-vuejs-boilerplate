@@ -28,20 +28,17 @@ describe("Login", () => {
 
   it("validates the password field on input", async () => {
     const wrapper = mount(Login);
-
     // Valid password input
     wrapper.find("input#password").setValue("Cccccccc@20");
     await wrapper.vm.$nextTick();
     expect(wrapper.find(".error-text").text()).toBe("");
-
     // Triggering the validation for an empty password
     wrapper.find("input#password").setValue("");
+    await wrapper.find("input#password").trigger("input"); // Trigger an input event
     await wrapper.vm.$nextTick(); // Ensure the validation is invoked
-
     // Expecting the error message for the empty password
-    expect(wrapper.find(".error-text").text()).toContain(
-      "Password is required"
-    );
+    const errorMessage = wrapper.find(".error-text").text().trim(); // Trim any extra spaces
+    expect(errorMessage).toContain("Password is required");
   });
 
   it("submits the form on button click with correct credentials", async () => {

@@ -77,7 +77,7 @@ const verify = async (event) => {
         jwtToken.value = data.jwtToken;
         store.commit("setLoggedIn", true);
         store.commit("setToken", data.jwtToken);
-        localStorage.setItem("token", jwtToken.value);
+        localStorage.setItem("jwtToken", jwtToken.value);
 
         alert("Logged in successfully!");
         router.push("/emp-manager");

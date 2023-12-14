@@ -2,8 +2,8 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
-    isLoggedIn: !localStorage.getItem("token") ? false : true,
-    token: localStorage.getItem("token") || null,
+    isLoggedIn: !localStorage.getItem("jwtToken") ? false : true,
+    jwtToken: localStorage.getItem("jwtToken") || null,
     email: "",
     isMFAFromLogin: false,
   },
@@ -11,9 +11,9 @@ export default createStore({
     setLoggedIn(state, status) {
       state.isLoggedIn = status;
     },
-    setToken(state, token) {
-      state.token = token;
-      localStorage.setItem("token", token);
+    setToken(state, jwtToken) {
+      state.jwtToken = jwtToken;
+      localStorage.setItem("jwtToken", jwtToken);
     },
     setEmail(state, email) {
       state.email = email;

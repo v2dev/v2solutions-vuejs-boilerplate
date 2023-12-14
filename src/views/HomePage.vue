@@ -3,12 +3,9 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="text-center">
-          <h1 class="mb-4">Welcome to the Home Page</h1>
+          <h1 class="mb-4">Welcome to V2Solutions Vue.js Boilerplate</h1>
           <hr />
-          <div v-if="store.state.isLoggedIn" class="logged-in-message">
-            <h2>Logged in successfully</h2>
-          </div>
-          <div v-else class="not-logged-in-message">
+          <div v-if="!store.state.isLoggedIn">
             <h2>Please login first</h2>
           </div>
         </div>
@@ -32,21 +29,28 @@ const store = useStore();
   margin-top: 20px;
 }
 
-.logged-in-message {
-  margin-top: 20px;
-  color: green;
-}
-
-.not-logged-in-message {
-  margin-top: 20px;
-  color: red;
-}
-
 h1 {
   font-size: 2.5rem;
+  text-align: center;
 }
 
 h2 {
   font-size: 1.8rem;
+}
+
+/* Adjust the h1 alignment based on the sidebar's width */
+@media screen and (min-width: 5rem) {
+  .container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .row {
+    width: 100%;
+  }
+
+  .col-md-8 {
+    max-width: 100%;
+  }
 }
 </style>
