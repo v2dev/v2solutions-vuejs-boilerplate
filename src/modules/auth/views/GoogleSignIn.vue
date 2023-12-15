@@ -1,14 +1,14 @@
 <template>
   <div class="text-center">
     <GoogleLogin :callback="callback" promt />
-    <p v-if="serverError" class="error-text">{{ serverError }}</p>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { serverError, setErrorMessage } from "@/helpers/validation";
+import { setErrorMessage } from "@/helpers/validation";
+import axios from "axios";
 
 const router = useRouter();
 const store = useStore();
@@ -34,20 +34,18 @@ const callback = async (response) => {
 
 const verifyGoogleToken = async (token) => {
   try {
-    const response = await fetch(
+    const response = await axios.post(
       `${process.env.VUE_APP_API_BASE_URL}/verify-google-token`,
+      { token },
       {
-        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ token }),
       }
     );
 
-    const data = await response.json();
-    console.log("Verification API Response:", data);
-    return data;
+    console.log("Verification API Response:", response.data);
+    return response.data;
   } catch (error) {
     console.error("Error verifying Google token:", error);
     throw error;

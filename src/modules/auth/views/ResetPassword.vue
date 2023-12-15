@@ -49,6 +49,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 import {
   validateField,
@@ -69,7 +70,7 @@ const tokenProvided = computed(() => !!resetPassToken.value);
 
 const resetPassword = async () => {
   if (!tokenProvided.value) {
-    validateForm(); // Validate form only if OTP is required
+    validateForm();
     if (otpError.value || passwordError.value || confirmPasswordError.value) {
       return;
     }
@@ -82,29 +83,26 @@ const resetPassword = async () => {
     };
 
     if (!tokenProvided.value) {
-      // Include OTP only if token is not provided
       requestBody.otp = otp.value;
     } else {
       requestBody.token = resetPassToken.value;
     }
 
-    const response = await fetch(
+    const response = await axios.post(
       `${process.env.VUE_APP_API_BASE_URL}/reset-password`,
+      requestBody,
       {
-        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestBody),
       }
     );
 
-    const data = await response.json();
-
-    if (response.ok) {
+    if (response.status === 200) {
       alert("Password reset successfully");
       router.push("/login");
     } else {
+      const data = response.data;
       if (data.error === "Invalid or expired OTP") {
         setErrorMessage(data.error);
       } else {

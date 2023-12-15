@@ -50,6 +50,7 @@
 
 <script setup>
 import { ref, onBeforeUnmount, onMounted } from "vue";
+import axios from "axios";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import {
@@ -57,8 +58,8 @@ import {
   serverError,
   setErrorMessage,
 } from "@/helpers/validation";
-
 import GoogleSignInVue from "./GoogleSignIn.vue";
+
 const store = useStore();
 const router = useRouter();
 
@@ -76,21 +77,26 @@ const login = async () => {
   }
 
   try {
-    const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await axios.post(
+      `${process.env.VUE_APP_API_BASE_URL}/login`,
+      {
+        email: email.value,
+        password: password.value,
       },
-      body: JSON.stringify({ email: email.value, password: password.value }),
-    });
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    if (response.ok) {
+    if (response.status === 200) {
       store.commit("setIsMFAFromLogin", true);
       store.commit("setEmail", email.value);
       router.push("/mfa-verify");
     } else {
-      const data = await response.json();
-      setErrorMessage(data.error) || "Login failed";
+      const data = response.data;
+      setErrorMessage(data.error || "Login failed");
     }
   } catch (error) {
     setErrorMessage("Login failed");

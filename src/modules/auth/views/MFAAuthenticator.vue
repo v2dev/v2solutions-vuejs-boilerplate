@@ -31,6 +31,7 @@ import {
   setErrorMessage,
   serverError,
 } from "@/helpers/validation";
+import axios from "axios";
 
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
@@ -57,23 +58,22 @@ const verify = async (event) => {
   }
 
   try {
-    const response = await fetch(
+    const response = await axios.post(
       `${process.env.VUE_APP_API_BASE_URL}/mfa-verify`,
       {
-        method: "POST",
+        email: email.value,
+        mfaToken: mfaOTP.value,
+      },
+      {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: email.value,
-          mfaToken: mfaOTP.value,
-        }),
       }
     );
 
     if (store.state.isMFAFromLogin) {
-      if (response.ok) {
-        const data = await response.json();
+      if (response.status === 200) {
+        const data = response.data;
         jwtToken.value = data.jwtToken;
         store.commit("setLoggedIn", true);
         store.commit("setToken", data.jwtToken);
@@ -82,7 +82,7 @@ const verify = async (event) => {
         alert("Logged in successfully!");
         router.push("/emp-manager");
       } else {
-        const data = await response.json();
+        const data = response.data;
         if (response.status === 401) {
           setErrorMessage("Invalid OTP");
         } else {
@@ -91,7 +91,7 @@ const verify = async (event) => {
       }
     } else {
       // Action for other MFA origins
-      if (response.ok) {
+      if (response.status === 200) {
         alert("Successfully verified");
         // Redirect to appropriate route after MFA verification for signup
         router.push("/login"); // Change this to the appropriate route
@@ -105,7 +105,7 @@ const verify = async (event) => {
       setErrorMessage("Login failed");
     } else {
       console.error("Error verifying:", error);
-      setErrorMessage("Error verifying:", error);
+      setErrorMessage("Error verifying: " + error.message);
     }
   }
 

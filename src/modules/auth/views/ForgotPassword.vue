@@ -38,6 +38,7 @@ import {
   serverError,
   setErrorMessage,
 } from "@/helpers/validation";
+import axios from "axios";
 
 const email = ref("");
 const emailError = ref("");
@@ -50,19 +51,20 @@ const submitVerificationCode = async () => {
     return;
   }
   try {
-    const response = await fetch(
+    const response = await axios.post(
       `${process.env.VUE_APP_API_BASE_URL}/forgot-password`,
       {
-        method: "POST",
+        email: email.value,
+      },
+      {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: email.value }),
       }
     );
 
-    if (response.ok) {
-      const data = await response.json();
+    if (response.status === 200) {
+      const data = response.data;
       if (data.error !== "User not found") {
         alert("Reset link sent to your email");
         router.push("/reset-password");
@@ -70,8 +72,7 @@ const submitVerificationCode = async () => {
         setErrorMessage(data.error);
       }
     } else {
-      const errorData = await response.json();
-      console.error("Error:", errorData);
+      console.error("Error:", response.data);
     }
   } catch (error) {
     console.error("Error:", error);

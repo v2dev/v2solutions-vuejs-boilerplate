@@ -103,6 +103,7 @@ import {
   serverError,
   setErrorMessage,
 } from "@/helpers/validation";
+import axios from "axios";
 
 const signup = async () => {
   event.preventDefault();
@@ -117,23 +118,26 @@ const signup = async () => {
   ) {
     return;
   }
+
   try {
-    const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const response = await axios.post(
+      `${process.env.VUE_APP_API_BASE_URL}/signup`,
+      {
         name: name.value,
         email: email.value,
         password: password.value,
         country: country.value,
-      }),
-    });
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    if (response.ok) {
-      const data = await response.json();
-      if (data.error === "Email is already in used.") {
+    if (response.status === 200) {
+      const data = response.data;
+      if (data.error === "Email is already in use.") {
         setErrorMessage(data.error);
       } else {
         qrCode.value = data.qrCodeUrl;
@@ -142,10 +146,9 @@ const signup = async () => {
         router.push("/mfa-verify");
       }
     } else {
-      const data = await response.json();
       console.error("Error signing up:", response.statusText);
-
-      setErrorMessage(data.error) || "Signup failed";
+      const data = response.data;
+      setErrorMessage(data.error || "Signup failed");
     }
   } catch (error) {
     console.error("Error signing up:", error);

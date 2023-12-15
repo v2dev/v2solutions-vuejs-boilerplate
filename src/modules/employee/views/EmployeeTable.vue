@@ -39,7 +39,7 @@ import { ref, onMounted, defineEmits, defineProps, watch } from "vue";
 
 import "vue-good-table-next/dist/vue-good-table-next.css";
 import { VueGoodTable } from "vue-good-table-next";
-import axiosInstance from "@/interceptors/interceptors";
+import axiosAuthInstance from "@/interceptors/interceptors";
 import AppModal from "@/components/AppModal.vue";
 const employees = ref([]);
 
@@ -86,7 +86,7 @@ const props = defineProps({
 // CRUD
 const fetchEmployees = async () => {
   try {
-    const response = await axiosInstance.get("/employees");
+    const response = await axiosAuthInstance.get("/employees");
 
     const data = response.data;
     console.log("Fetched Employees:", data);
@@ -138,7 +138,7 @@ const editEmployee = (employee) => {
 
 const deleteEmployee = async (employeeId) => {
   try {
-    const response = await axiosInstance.delete(`/employees/${employeeId}`);
+    const response = await axiosAuthInstance.delete(`/employees/${employeeId}`);
     if (response.status === 200) {
       showModal.value = false;
       fetchEmployees();
