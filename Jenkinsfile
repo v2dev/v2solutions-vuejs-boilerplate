@@ -3,6 +3,13 @@ pipeline{
     options {
         skipDefaultCheckout(true)
     }
+
+      environment {
+        SONARQUBE_CREDENTIALS = credentials('sonar-cred')
+        SONARQUBE_SERVER = 'sonarconfig'
+        SCAN_TOKEN = credentials('vuejs-scan-token')
+    }
+
     stages{
         stage("Initialise"){
             steps{
