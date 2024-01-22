@@ -14,6 +14,20 @@ pipeline{
                 git branch: 'Chandrashekar_main', url: 'https://github.com/v2dev/v2solutions-vuejs-boilerplate.git'
             }
         }
+
+        stage('SonarQube Scan') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarQubeScanner'
+                    def projectKey = "Vuejs"
+                    withSonarQubeEnv(SONARQUBE_SERVER) {
+                        echo "Current working directory: ${pwd()}"
+                        bat "./sonarqube_script.bat ${scannerHome} ${projectKey}"
+                    }
+                }
+            }   
+        }
+
         stage("build"){
             when {
                 expression {
