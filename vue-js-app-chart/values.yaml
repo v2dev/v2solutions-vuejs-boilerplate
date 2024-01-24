@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: v2devops/v2solutions-vuejs-boilerplate
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: "16"
 
 imagePullSecrets: []
 nameOverride: ""
