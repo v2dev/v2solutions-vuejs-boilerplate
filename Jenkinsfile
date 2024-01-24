@@ -45,6 +45,18 @@ pipeline{
             }
         }
 
+        stage("push"){
+            steps{
+                withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
+                    bat '@echo off'
+                    bat 'echo %WORKSPACE%'
+                    dir("DevOpsScripts") {
+                        bat './push_script.bat %BUILD_NUMBER%'
+                    }
+                }
+            }
+        }
+
         // Helm Chart Stage
         stage("Helm Chart") {
             steps {
@@ -77,17 +89,7 @@ pipeline{
         }
 
 
-        stage("push"){
-            steps{
-                withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
-                    bat '@echo off'
-                    bat 'echo %WORKSPACE%'
-                    dir("DevOpsScripts") {
-                        bat './push_script.bat %BUILD_NUMBER%'
-                    }
-                }
-            }
-        }
+        
     }
 }
 
