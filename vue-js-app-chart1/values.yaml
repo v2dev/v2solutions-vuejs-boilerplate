@@ -1,9 +1,0 @@
-replicaCount: 1
-image:
-  repository: v2devops/v2solutions-vuejs-boilerplate
-  tag: latest
-  pullPolicy: IfNotPresent
-service:
-  name: vuejs-app
-  type: ClusterIP
-  port: 8080
