@@ -80,7 +80,7 @@ pipeline{
                     dir("vue-js-app-chart") {
                         withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
                             // Push the Helm chart to Docker Hub
-                            bat "helm push vuejs-app-chart-0.1.0.tgz  oci://registry-1.docker.io/v2devops"
+                            bat "helm push vue-js-app-chart-0.1.0.tgz  oci://registry-1.docker.io/v2devops"
                             // echo "helm chart push successful"
                         }
                     }
