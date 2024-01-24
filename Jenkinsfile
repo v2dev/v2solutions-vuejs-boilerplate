@@ -65,7 +65,7 @@ pipeline{
         stage("Push Helm Chart to Docker Hub") {
             steps {
                 script {
-                    dir("node-js-app-chart") {
+                    dir("vue-js-app-chart") {
                         withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
                             // Push the Helm chart to Docker Hub
                             bat "helm push vuejs-app-0.1.0.tgz  oci://registry-1.docker.io/v2devops"
