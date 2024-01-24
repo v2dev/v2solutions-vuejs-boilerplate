@@ -44,6 +44,39 @@ pipeline{
                 }
             }
         }
+
+        // Helm Chart Stage
+        stage("Helm Chart") {
+            steps {
+                script {
+                    // Update Helm chart values.yaml with the build number
+                    updateHelmChartValues(env.BUILD_NUMBER)
+                    dir("vue-js-app-chart") {
+                        // Run commands to create the Helm chart (e.g., helm package)
+                        bat '@echo off'
+                        bat 'echo "Creating package"'
+                        bat 'helm package .'
+                    }
+                }
+            }
+        }
+
+        // Push Helm Chart to Docker Hub
+        stage("Push Helm Chart to Docker Hub") {
+            steps {
+                script {
+                    dir("node-js-app-chart") {
+                        withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
+                            // Push the Helm chart to Docker Hub
+                            bat "helm push vuejs-app-0.1.0.tgz  oci://registry-1.docker.io/v2devops"
+                            // echo "helm chart push successful"
+                        }
+                    }
+                }
+            }
+        }
+
+
         stage("push"){
             steps{
                 withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
@@ -56,4 +89,16 @@ pipeline{
             }
         }
     }
+}
+
+def updateHelmChartValues(buildNumber) {
+    // Read values.yaml file
+    def valuesYamlPath = "vue-js-app-chart/values.yaml"
+    def valuesYamlContent = readFile(file: valuesYamlPath).trim()
+
+    // Update image tag with the build number
+    valuesYamlContent = valuesYamlContent.replaceAll(/tag: latest/, "tag: ${buildNumber}")
+
+    // Write updated values.yaml file
+    writeFile(file: valuesYamlPath, text: valuesYamlContent)
 }
