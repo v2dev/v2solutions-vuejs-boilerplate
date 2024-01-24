@@ -22,18 +22,18 @@ pipeline{
             }
         }
 
-        stage('SonarQube Scan') {
-            steps {
-                script {
-                    def scannerHome = tool 'SonarQubeScanner'
-                    def projectKey = "Vuejs"
-                    withSonarQubeEnv(SONARQUBE_SERVER) {
-                        echo "Current working directory: ${pwd()}"
-                        bat "./sonarqube_script.bat ${scannerHome} ${projectKey}"
-                    }
-                }
-            }   
-        }
+        // stage('SonarQube Scan') {
+        //     steps {
+        //         script {
+        //             def scannerHome = tool 'SonarQubeScanner'
+        //             def projectKey = "Vuejs"
+        //             withSonarQubeEnv(SONARQUBE_SERVER) {
+        //                 echo "Current working directory: ${pwd()}"
+        //                 bat "./sonarqube_script.bat ${scannerHome} ${projectKey}"
+        //             }
+        //         }
+        //     }   
+        // }
 
         stage("build"){
             steps{
@@ -80,7 +80,7 @@ pipeline{
                     dir("vue-js-app-chart") {
                         withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
                             // Push the Helm chart to Docker Hub
-                            bat "helm push vuejs-app-0.1.0.tgz  oci://registry-1.docker.io/v2devops"
+                            bat "helm push vuejs-app-chart-0.1.0.tgz  oci://registry-1.docker.io/v2devops"
                             // echo "helm chart push successful"
                         }
                     }
