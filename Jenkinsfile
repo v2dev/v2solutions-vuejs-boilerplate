@@ -22,7 +22,7 @@ pipeline {
         // Setting up Git
         stage("Git") {
             steps {
-                git branch: 'Chandrashekar_main', credentialsId: 'git_token_cs', url: 'https://github.com/v2dev/v2solutions-vuejs-boilerplate_latest_version.git'
+                git branch: 'Chandrashekar_main', credentialsId: 'git_token_cs', url: 'https://github.com/v2dev/v2solutions-vuejs-boilerplate'
             }
         }
 
