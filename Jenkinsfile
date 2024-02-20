@@ -103,31 +103,33 @@ pipeline {
                 expression { params.INFRA_ACTION?.toLowerCase() == 'destroy' }
             }
             steps {
-                def bucketName = "v2-vuejs-boilerplate"
-                def bucketExists = false
-                
-                // Check if the bucket exists
-                def checkBucketCommand = "aws s3api head-bucket --bucket ${bucketName} 2>&1"
-                def checkBucketResult = bat(script: checkBucketCommand, returnStatus: true)
-                
-                if (checkBucketResult == 0) {
-                    bucketExists = true
-                    echo "Bucket ${bucketName} exists."
-                } else {
-                    echo "Bucket ${bucketName} does not exist."
-                }
-
-                // Perform delete operation only if the bucket exists
-                if (bucketExists) {
-                    bat 'echo "RunningS3DeleteObject"'
-                    bat '@echo off'
-                    script {
-                        dir("scripts") {
-                            bat "delete-objects.bat"
-                        }
+                script {
+                    def bucketName = "v2-vuejs-boilerplate"
+                    def bucketExists = false
+                    
+                    // Check if the bucket exists
+                    def checkBucketCommand = "aws s3api head-bucket --bucket ${bucketName} 2>&1"
+                    def checkBucketResult = bat(script: checkBucketCommand, returnStatus: true)
+                    
+                    if (checkBucketResult == 0) {
+                        bucketExists = true
+                        echo "Bucket ${bucketName} exists."
+                    } else {
+                        echo "Bucket ${bucketName} does not exist."
                     }
-                } else {
-                    echo "Skipping delete operation as the bucket does not exist."
+
+                    // Perform delete operation only if the bucket exists
+                    if (bucketExists) {
+                        bat 'echo "RunningS3DeleteObject"'
+                        bat '@echo off'
+                        script {
+                            dir("scripts") {
+                                bat "delete-objects.bat"
+                            }
+                        }
+                    } else {
+                        echo "Skipping delete operation as the bucket does not exist."
+                    }
                 }
             }
         }
