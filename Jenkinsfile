@@ -166,11 +166,11 @@ pipeline {
                 script {
                     // Modify environment.prod.ts file with the provided EKS_API_ENDPOINT
                     def eksApiEndpoint = params.EKS_API_ENDPOINT
-                    def filePath = "${WORKSPACE}/src/environments/environment.prod.ts"
+                    def filePath = "${WORKSPACE}/.env"
                     // Read the file content
                     def fileContent = readFile(filePath)
                     // Replace the apiUrl value with the provided EKS_API_ENDPOINT
-                    def modifiedContent = fileContent.replaceAll(/apiUrl:\s*'(.*)'/, "apiUrl: '${eksApiEndpoint}:8080'")
+                    def modifiedContent = fileContent.replaceAll(/VUE_APP_API_BASE_URL:\s*'(.*)'/, "VUE_APP_API_BASE_URL: '${eksApiEndpoint}:8080'")
                     // Write the modified content back to the file
                     writeFile file: filePath, text: modifiedContent
                 }
