@@ -103,7 +103,22 @@ pipeline {
                 expression { params.INFRA_ACTION?.toLowerCase() == 'destroy' }
             }
             steps {
-                script {
+                def bucketName = "v2-vuejs-boilerplate"
+                def bucketExists = false
+                
+                // Check if the bucket exists
+                def checkBucketCommand = "aws s3api head-bucket --bucket ${bucketName} 2>&1"
+                def checkBucketResult = bat(script: checkBucketCommand, returnStatus: true)
+                
+                if (checkBucketResult == 0) {
+                    bucketExists = true
+                    echo "Bucket ${bucketName} exists."
+                } else {
+                    echo "Bucket ${bucketName} does not exist."
+                }
+
+                // Perform delete operation only if the bucket exists
+                if (bucketExists) {
                     bat 'echo "RunningS3DeleteObject"'
                     bat '@echo off'
                     script {
@@ -111,6 +126,8 @@ pipeline {
                             bat "delete-objects.bat"
                         }
                     }
+                } else {
+                    echo "Skipping delete operation as the bucket does not exist."
                 }
             }
         }
@@ -152,6 +169,9 @@ pipeline {
 
         // Install dependencies
         stage("Install dependencies") {
+            when {
+                expression { params.INFRA_ACTION != 'destroy' }
+            }
             steps {
                 bat '@echo off'
                 bat 'echo %WORKSPACE%'
@@ -162,9 +182,12 @@ pipeline {
 
         // Install dependencies and Build Vuejs App
         stage("Build Vuejs App") {
+            when {
+                expression { params.INFRA_ACTION != 'destroy' }
+            }
             steps {
                 script {
-                    // Modify environment.prod.ts file with the provided EKS_API_ENDPOINT
+                    // Modify .env file with the provided EKS_API_ENDPOINT
                     def eksApiEndpoint = params.EKS_API_ENDPOINT
                     def filePath = "${WORKSPACE}/.env"
                     // Read the file content
