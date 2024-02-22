@@ -47,7 +47,7 @@ pipeline {
             }   
         }
 
-        // Commenting this stage as this will be used once the email servers are setup on the actual environment
+        // Commenting this stage as this will be used once the email servers are setup on the actual
         // // Email Notification Stage
         // stage('Email Notification') {
         //     steps {
